@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Container, Spinner, Alert } from 'reactstrap';
-
 import { api } from '../api';
 import { SearchInput } from '../components/SearchInput';
 import { RecipesList } from '../components/RecipesList';
 
+// recepty
 export function RecipeListPage() {
   const [recipes, setRecipes] = useState([]);
   const [isLoading, setLoading] = useState(false);
@@ -12,8 +12,8 @@ export function RecipeListPage() {
   const [searchValue, setSearchValue] = useState('');
 
   const filterredRecipes = recipes.filter((recipe) =>
-    recipe.title.toLowerCase().includes(searchValue.toLowerCase()),
-  );
+    recipe.title.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().includes(searchValue.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()),
+  ).sort((a,b) => a.preparationTime - b.preparationTime);
 
   useEffect(() => {
     setLoading(true);
@@ -35,9 +35,12 @@ export function RecipeListPage() {
       />
       {isLoading && <Spinner className="mb-4" />}
       {error && (
-        <Alert color="danger">Vyskytla se chyba při načítání dat</Alert>
+        <Alert color="danger" >Vyskytla se chyba při načítání dat.</Alert>
       )}
       <RecipesList recipes={filterredRecipes} />
     </Container>
   );
 }
+
+
+

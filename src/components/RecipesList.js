@@ -1,8 +1,7 @@
 import { Row, Col } from 'reactstrap';
-
 import { RecipeCard } from './RecipeCard';
-import { RecipesEdit } from './RecipeEdit';
 
+// seznam receptu
 export function RecipesList({ recipes }) {
   return (
     <Row className="gy-4">
@@ -12,11 +11,8 @@ export function RecipesList({ recipes }) {
             title={recipe.title}
             preparationTime={recipe.preparationTime}
             slug={recipe.slug}
-            hasMargin
+            sideDish={recipe.sideDish}
           />
-
-          <RecipesEdit hasMargin/>
-
         </Col>
       ))}
     </Row>

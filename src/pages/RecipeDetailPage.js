@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Container, Spinner, Alert, Row, Col, List } from 'reactstrap';
+import { Container, Spinner, Alert, Row, Col } from 'reactstrap';
+import { RecipesEdit } from '../components/RecipeEdit';
+import RecipeIngredienceList from '../components/RecipeIngredienceList';
 
 import { api } from '../api';
+import { DeleteButton } from '../components/DeleteButton';
 
+// detaily receptu
 export function RecipeDetailPage() {
   const { slug } = useParams();
   const [recipe, setRecipe] = useState({});
@@ -20,32 +24,33 @@ export function RecipeDetailPage() {
       .finally(() => setLoading(false));
   }, [slug]);
 
+  // spinner behem nacitatni
   if (isLoading) {
     return <Spinner />;
   }
 
+  // chybova hlaska
   if (error) {
     return <Alert color="danger">Vyskytla se chyba při načítání dat</Alert>;
   }
 
   return (
     <Container>
+      <DeleteButton recipe={recipe}/>
       <h1>{recipe.title}</h1>
+
       <Row>
         <Col lg={4}>
-          <h5>{recipe.preparationTime} min</h5>
-          <List type="unstyled">
-            {recipe.ingredients?.map((ingredient) => (
-              <li key={ingredient._id}>
-                {ingredient.amount} {ingredient.amountUnit} - {ingredient.name}
-              </li>
-            ))}
-          </List>
+          <h5>{recipe.preparationTime ? (Math.floor(recipe.preparationTime / 60) + ' h' + '  ' + Math.floor(recipe.preparationTime % 60) + '  ' + 'min') : ('?' + ' h' + '  ' + '?' + ' min' )}</h5>
+          <RecipeIngredienceList recipe={recipe} />
         </Col>
         <Col lg={8}>
-          <p>{recipe.directions}</p>
+          {recipe.directions && recipe.directions.split("\n").map((el, i) => (<p key={i}> {el} </p>))}
+
         </Col>
       </Row>
+      <RecipesEdit recipe={recipe} />
+
     </Container>
   );
 }
